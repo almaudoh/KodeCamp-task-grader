@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, get_args
 
 ScoreScale = Literal["0-1", "0-5", "0-10", "percentage"]
 
@@ -20,6 +20,15 @@ class Criterion:
     weight: float
     scale: ScoreScale
 
+    def __post_init__(self):
+        if self.scale not in SCORE_SCALE_DESCRIPTIONS:
+            raise ValueError(
+                f"Invalid scale: {self.scale}. Must be one of {get_args(ScoreScale)}"
+            )
+
+        if self.weight <= 0:
+            raise ValueError(f"Invalid weight: {self.weight}. Must be positive")
+
 
 @dataclass
 class Rubric:
@@ -35,9 +44,11 @@ class Rubric:
             raise ValueError("criteria must be non-empty")
 
         if self.min_passing_score <= 0:
-            raise ValueError("min_passing_score must be positive")
+            raise ValueError(
+                f"Invalid min_passing_score: {self.min_passing_score}. Must be positive"
+            )
 
         if self.min_passing_score > self.overall_max_score:
             raise ValueError(
-                "min_passing_score must be less than or equal to overall_max_score"
+                f"Invalid min_passing_score: {self.min_passing_score}. Must be less than or equal to overall_max_score"
             )

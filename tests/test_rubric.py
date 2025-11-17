@@ -68,7 +68,7 @@ def test_rubric_post_init_rejects_non_positive_min_passing_score():
                 )
             ],
         )
-    assert "must be positive" in str(excinfo.value)
+    assert "Must be positive" in str(excinfo.value)
 
 
 def test_rubric_post_init_rejects_min_passing_score_above_max():
