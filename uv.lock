@@ -911,6 +911,7 @@ name = "task-grader"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "jsonpatch" },
     { name = "langchain" },
     { name = "langchain-groq" },
     { name = "langchain-ollama" },
@@ -934,6 +935,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "jsonpatch", specifier = ">=1.33" },
     { name = "langchain", specifier = ">=1.0.5" },
     { name = "langchain-groq", specifier = ">=1.0.0" },
     { name = "langchain-ollama", specifier = ">=1.0.0" },

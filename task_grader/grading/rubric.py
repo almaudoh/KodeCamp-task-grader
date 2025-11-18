@@ -1,15 +1,44 @@
 from dataclasses import dataclass
-from typing import Literal, get_args
+from typing import Literal, Mapping, get_args
 
 ScoreScale = Literal["0-1", "0-5", "0-10", "percentage"]
 
-# Map each score scale to its description (used as semantic guardrail in the grading prompt template)
-SCORE_SCALE_DESCRIPTIONS: dict[ScoreScale, str] = {
-    "0-1": "use an integer score of 0 or 1",
-    "0-5": "use an integer score from 0 to 5",
-    "0-10": "use an integer score from 0 to 10",
-    "percentage": "use an integer score from 0 to 100",
+# Numeric ranges for each score scale.
+# Used only for validation + computing an overall numeric score.
+SCORE_SCALE_NUMERIC_RANGES: dict[ScoreScale, tuple[int, int]] = {
+    "0-1": (0, 1),
+    "0-5": (0, 5),
+    "0-10": (0, 10),
+    "percentage": (0, 100),
 }
+
+
+def _build_score_scale_descriptions(
+    ranges: Mapping[ScoreScale, tuple[int, int]],
+) -> dict[ScoreScale, str]:
+    """
+    Generate human-readable descriptions for each score scale from its numeric range.
+
+    This keeps SCORE_SCALE_NUMERIC_RANGES as the single source of truth, and
+    avoids duplicating the same information in two separate dicts.
+    """
+    descriptions: dict[ScoreScale, str] = {}
+
+    for scale, (lo, hi) in ranges.items():
+        # Optional: special-case 0–1 to keep the slightly nicer "0 or 1" phrasing
+        if lo == 0 and hi == 1:
+            desc = "use an integer score of 0 or 1"
+        else:
+            desc = f"use an integer score from {lo} to {hi}"
+        descriptions[scale] = desc
+
+    return descriptions
+
+
+# Map each score scale to its description (used as semantic guardrail in the grading prompt template)
+SCORE_SCALE_DESCRIPTIONS: dict[ScoreScale, str] = _build_score_scale_descriptions(
+    SCORE_SCALE_NUMERIC_RANGES
+)
 
 
 @dataclass
