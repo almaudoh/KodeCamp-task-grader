@@ -175,6 +175,27 @@ class LMSClient:
 
         return submissions
 
+    def get_task_with_submissions(
+        self,
+        task_id: str,
+        workspace_slug: str,
+    ) -> dict:
+        """
+        Fetch task details along with its submissions.
+        """
+        if not self.is_token_valid():
+            self.login()
+
+        task_retrieval_url = f"{self.base_url}/{workspace_slug}/tasks/{task_id}"
+        resp = self._session.get(task_retrieval_url)
+        resp.raise_for_status()
+        data = resp.json()
+
+        if not isinstance(data, dict) or not data.get("task"):
+            raise RuntimeError("Could not retrieve the expected task data")
+
+        return data
+
     def get_token(self):
         return self._token
 
