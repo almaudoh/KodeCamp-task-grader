@@ -189,12 +189,12 @@ class LMSClient:
         task_retrieval_url = f"{self.base_url}/{workspace_slug}/tasks/{task_id}"
         resp = self._session.get(task_retrieval_url)
         resp.raise_for_status()
-        data = resp.json()
+        task = resp.json()
 
-        if not isinstance(data, dict) or not data.get("task"):
+        if not isinstance(task, dict) or not task.get("submissions"):
             raise RuntimeError("Could not retrieve the expected task data")
 
-        return data
+        return task
 
     def get_token(self):
         return self._token
