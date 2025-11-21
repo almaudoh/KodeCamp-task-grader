@@ -1,4 +1,6 @@
-from dataclasses import dataclass
+import json
+from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Literal, Mapping, get_args
 
 ScoreScale = Literal["0-1", "0-5", "0-10", "percentage"]
@@ -58,6 +60,32 @@ class Criterion:
         if self.weight <= 0:
             raise ValueError(f"Invalid weight: {self.weight}. Must be positive")
 
+    def save_to_json(self, dest_dir: str | Path, filename: str) -> None:
+        """Save a Criterion object to a JSON file"""
+        if not isinstance(dest_dir, Path):
+            dest_dir = Path(dest_dir)
+
+        # Create the destination directory if it doesn't already exist
+        dest_dir.mkdir(parents=True, exist_ok=True)
+
+        filepath: Path = dest_dir / f"{filename}.json"
+
+        with open(filepath, "w") as f:
+            json.dump(asdict(self), f, indent=4)
+
+    @classmethod
+    def load_from_json(cls, source_dir: str | Path, filename: str) -> "Criterion":
+        """Load a Criterion object from a JSON file"""
+        if not isinstance(source_dir, Path):
+            source_dir = Path(source_dir)
+
+        filepath: Path = source_dir / f"{filename}.json"
+
+        with open(filepath, "r") as f:
+            criterion_data = json.load(f)
+
+        return cls(**criterion_data)
+
 
 @dataclass
 class Rubric:
@@ -81,3 +109,33 @@ class Rubric:
             raise ValueError(
                 f"Invalid min_passing_score: {self.min_passing_score}. Must be less than or equal to overall_max_score"
             )
+
+    def save_to_json(self, dest_dir: str | Path, filename: str) -> None:
+        """Save a Rubric object to a JSON file"""
+        if not isinstance(dest_dir, Path):
+            dest_dir = Path(dest_dir)
+
+        # Create the destination directory if it doesn't already exist
+        dest_dir.mkdir(parents=True, exist_ok=True)
+
+        filepath: Path = dest_dir / f"{filename}.json"
+
+        with open(filepath, "w") as f:
+            json.dump(asdict(self), f, indent=4)
+
+    @classmethod
+    def load_from_json(cls, source_dir: str | Path, filename: str) -> "Rubric":
+        """Load a Rubric object from a JSON file"""
+        if not isinstance(source_dir, Path):
+            source_dir = Path(source_dir)
+
+        filepath: Path = source_dir / f"{filename}.json"
+
+        with open(filepath, "r") as f:
+            rubric_data = json.load(f)
+
+        rubric_data["criteria"] = [
+            Criterion(**criterion) for criterion in rubric_data["criteria"]
+        ]
+
+        return cls(**rubric_data)

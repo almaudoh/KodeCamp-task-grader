@@ -300,7 +300,7 @@ class LLMTaskEvaluator:
 
             if not isinstance(score, int):
                 raise ValueError(
-                    f"Score for criterion {canonical_id!r} must be an integer, got {type(score)!r}"
+                    f"Score for criterion {canonical_id!r} must be an integer, got {type(score)!r}."
                 )
 
             if not (min_score <= score <= max_score):
