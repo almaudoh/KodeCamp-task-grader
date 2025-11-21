@@ -143,6 +143,7 @@ rubric = Rubric(
 ```
 
 **Available Score Scales:**
+
 - `"0-1"`: Binary (pass/fail)
 - `"0-5"`: Five-point scale
 - `"0-10"`: Ten-point scale
@@ -345,7 +346,7 @@ downloader = GoogleDocsDownloader()
 
 for submission in submissions[:5]:  # Process first 5
     print(f"\nEvaluating {submission.trainee_name}...")
-    
+
     # Download submission
     submission_path = downloader.download_as(
         doc_url=submission.solution_urls[0],
@@ -353,10 +354,10 @@ for submission in submissions[:5]:  # Process first 5
         filename=f"{submission.trainee_id}_{submission.submission_id}",
         as_format="txt"
     )
-    
+
     # Read submission
     submission_text = Path(submission_path).read_text()
-    
+
     # Evaluate
     result = evaluator.evaluate(
         rubric=rubric,
@@ -367,7 +368,7 @@ for submission in submissions[:5]:  # Process first 5
         cohort_specifics="Agentic AI Track, Nov 2025",
         track_name="Agentic AI"
     )
-    
+
     # Display results
     print(f"Score: {result.total_score}/{rubric.overall_max_score}")
     print(f"Verdict: {result.overall_verdict}")
@@ -413,9 +414,11 @@ KodeCamp-task-grader/
 ### Core Classes
 
 #### `Rubric`
+
 Defines grading criteria and overall scoring parameters.
 
 **Attributes:**
+
 - `task_id`: Unique identifier for the task
 - `title`: Rubric title
 - `description`: Detailed rubric description
@@ -424,9 +427,11 @@ Defines grading criteria and overall scoring parameters.
 - `criteria`: List of `Criterion` objects
 
 #### `Criterion`
+
 Individual grading criterion with weight and scale.
 
 **Attributes:**
+
 - `id`: Unique criterion identifier
 - `name`: Human-readable name
 - `description`: What this criterion evaluates
@@ -434,16 +439,20 @@ Individual grading criterion with weight and scale.
 - `scale`: Score scale ("0-1", "0-5", "0-10", "percentage")
 
 #### `LLMTaskEvaluator`
+
 Main evaluation engine using LLMs.
 
 **Methods:**
+
 - `from_ollama(model_name, prompt_template_path, temperature, **kwargs)`: Create evaluator with Ollama
 - `evaluate(rubric, assignment, submission, trainee_name, knowledge_area, cohort_specifics, track_name, other_notes)`: Evaluate a submission
 
 #### `EvaluationResult`
+
 Structured evaluation output.
 
 **Attributes:**
+
 - `intro`: One-sentence summary
 - `overall_evaluation`: Paragraph summary (3-5 sentences)
 - `overall_verdict`: Qualitative verdict (e.g., "excellent", "good", "fail")
@@ -452,9 +461,11 @@ Structured evaluation output.
 - `raw_yaml`: Raw YAML response from LLM
 
 #### `LMSClient`
+
 Interface for LMS API interactions.
 
 **Methods:**
+
 - `from_env()`: Create client from environment variables
 - `login()`: Authenticate with LMS
 - `get_task_submissions(task_id, workspace_slug, category, offset, limit)`: Fetch submissions
@@ -481,6 +492,7 @@ pytest --cov=task_grader
 ### Code Quality
 
 The project uses:
+
 - **Black**: Code formatting
 - **Ruff**: Linting
 - **MyPy**: Type checking
@@ -531,6 +543,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Author
 
 **Anthony Okoro**
+
 - Email: antoine.okoro@gmail.com
 - GitHub: [@uchokoro](https://github.com/uchokoro)
 
@@ -544,6 +557,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 For issues, questions, or contributions, please:
+
 - Open an issue on [GitHub](https://github.com/uchokoro/KodeCamp-task-grader/issues)
 - Contact the author directly
 
