@@ -112,6 +112,7 @@ class LLMTaskEvaluator:
         cohort_specifics: str,
         track_name: str,
         other_notes: str = "",
+        save_yaml_to: Path | None = None,
     ) -> EvaluationResult:
         """
         Evaluate a trainee submission against the given rubric using the LLM.
@@ -164,6 +165,8 @@ class LLMTaskEvaluator:
 
         # Extract YAML block and parse
         yaml_text = self._extract_yaml_block(raw_text)
+        if save_yaml_to:
+            save_yaml_to.write_text(yaml_text, encoding="utf-8")
         data = self._parse_yaml(yaml_text)
 
         # Validate structure and map onto rubric
@@ -380,3 +383,56 @@ class LLMTaskEvaluator:
 
         normalized_total = weighted_sum / total_weight
         return normalized_total * rubric.overall_max_score
+
+
+Rubric(
+    task_id="",
+    title="Intelligent Customer Support System Prompt Chain",
+    description="Evaluates the design and implementation of a prompt chain for an intelligent customer support system.",
+    overall_max_score=100.0,
+    min_passing_score=75.0,
+    criteria=[
+        Criterion(
+            id="1a",
+            name="Prompt Chain Structure",
+            description="The prompt chain is well-structured, with clear and logical connections between each stage.",
+            weight=20.0,
+            scale="0-5",
+        ),
+        Criterion(
+            id="1b",
+            name="Interpret Customer Intent",
+            description="The prompt correctly interprets the customer's intent, understanding what they are asking or reporting.",
+            weight=15.0,
+            scale="0-5",
+        ),
+        Criterion(
+            id="2a",
+            name="Map Query to Categories",
+            description="The prompt successfully maps the query to possible categories, suggesting one or more relevant options.",
+            weight=10.0,
+            scale="0-5",
+        ),
+        Criterion(
+            id="2b",
+            name="Choose Most Appropriate Category",
+            description="The prompt correctly chooses the most appropriate category from the mapped options, based on the query.",
+            weight=10.0,
+            scale="0-5",
+        ),
+        Criterion(
+            id="3a",
+            name="Extract Additional Details",
+            description="The prompt identifies and extracts any additional details needed to address the customer's request.",
+            weight=10.0,
+            scale="0-5",
+        ),
+        Criterion(
+            id="4a",
+            name="Generate Short Response",
+            description="The prompt generates a suitable response to the customer, based on the chosen category and extracted details.",
+            weight=15.0,
+            scale="0-10",
+        ),
+    ],
+)
