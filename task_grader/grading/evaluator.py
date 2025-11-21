@@ -98,6 +98,33 @@ class LLMTaskEvaluator:
 
         return cls(llm=llm, base_prompt_template=base_template)
 
+    @classmethod
+    def from_groq(
+        cls,
+        model_name: str,
+        prompt_template_path: str | Path,
+        api_key: str = None,
+        temperature: float = 0.0,
+        **groq_kwargs: Any,
+    ) -> "LLMTaskEvaluator":
+        """
+        Convenience constructor that builds a Groq LLM and loads the base
+        grading prompt template from disk.
+        """
+        from langchain_groq import ChatGroq
+
+        llm = ChatGroq(
+            model=model_name,
+            api_key=api_key,
+            temperature=temperature,
+            **groq_kwargs,
+        )
+
+        template_path = Path(prompt_template_path)
+        base_template = template_path.read_text(encoding="utf-8")
+
+        return cls(llm=llm, base_prompt_template=base_template)
+
     # ---------------------------------------------------------------------
     # Public API
     # ---------------------------------------------------------------------
